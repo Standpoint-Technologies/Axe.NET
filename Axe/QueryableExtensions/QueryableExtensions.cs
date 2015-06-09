@@ -28,6 +28,11 @@ namespace Axe.QueryableExtensions
         public static IQueryable<TEntity> AxeFields<TEntity>(this IQueryable<TEntity> query, string fields, AxeProfile profile)
             where TEntity : class, new()
         {
+            if (string.IsNullOrEmpty(fields))
+            {
+                return query;
+            }
+
             var fieldRing = profile.FieldParser.ParseFields(fields);
             var selector = profile.ExpressionBuilder.BuildExpression<TEntity>(fieldRing, profile);
             return query.Select(selector);
