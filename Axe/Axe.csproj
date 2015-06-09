@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="AxeProfile.cs" />
     <Compile Include="DefaultAxe.cs" />
+    <Compile Include="Engines\DefaultAxeEngine.cs" />
+    <Compile Include="Engines\IAxeEngine.cs" />
     <Compile Include="ExpressionBuilders\DefaultExpressionBuilder.cs" />
     <Compile Include="ExpressionBuilders\IExpressionBuilder.cs" />
     <Compile Include="FieldParsers\GoogleParser.cs" />

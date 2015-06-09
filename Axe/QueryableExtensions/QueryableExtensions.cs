@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Axe.Engines;
 
 namespace Axe.QueryableExtensions
 {
@@ -14,7 +15,7 @@ namespace Axe.QueryableExtensions
         public static IQueryable<TEntity> AxeFields<TEntity>(this IQueryable<TEntity> query, string fields)
             where TEntity : class, new()
         {
-            return AxeFields<TEntity>(query, fields, DefaultAxe.Profile);
+            return AxeFields<TEntity>(query, fields, DefaultAxe.Engine);
         }
 
         /// <summary>
@@ -25,17 +26,10 @@ namespace Axe.QueryableExtensions
         /// <param name="fields"></param>
         /// <param name="profile"></param>
         /// <returns></returns>
-        public static IQueryable<TEntity> AxeFields<TEntity>(this IQueryable<TEntity> query, string fields, AxeProfile profile)
+        public static IQueryable<TEntity> AxeFields<TEntity>(this IQueryable<TEntity> query, string fields, IAxeEngine engine)
             where TEntity : class, new()
         {
-            if (string.IsNullOrEmpty(fields))
-            {
-                return query;
-            }
-
-            var fieldRing = profile.FieldParser.ParseFields(fields);
-            var selector = profile.ExpressionBuilder.BuildExpression<TEntity>(fieldRing, profile);
-            return query.Select(selector);
+            return engine.AxeFields(query, fields);
         }
     }
 }
