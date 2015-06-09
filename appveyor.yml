@@ -1,0 +1,23 @@
+version: 0.1.{build}
+branches:
+  only:
+  - master
+configuration: Release
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+build:
+  publish_nuget: true
+  verbosity: minimal
+test: off
+notifications:
+- provider: Email
+  to:
+  - tbenfield@standpointtech.com
+  subject: Axe.NET Build
+  on_build_success: false
+  on_build_failure: false
+  on_build_status_changed: true
