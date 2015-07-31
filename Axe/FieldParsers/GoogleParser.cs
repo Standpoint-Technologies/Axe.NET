@@ -5,28 +5,29 @@ namespace Axe.FieldParsers
 {
     public class GoogleParser : IFieldParser
     {
-        private Regex _nestRegex = new Regex(@"(?<field>[^\(]+)\((?<subFields>.*)\)");
-
-        private Regex _splitRegex = new Regex(@"([^,]*\x28[^\x29]*\x29|[^,]+)");
+        private Regex _patternRegex = new Regex(@"(?<field>[^,\(]+)((?<open>\()(?<subfields>.+)(?<-open>\))(?(open)(?!)))?");
 
 
         public FieldRing ParseFields(string fields)
         {
             var ret = new FieldRing();
-            foreach (var field in _splitRegex.Split(fields).Where(x => x != string.Empty && x != ",").Select(x => x.Trim()))
+            var match = _patternRegex.Match(fields);
+            while (match.Success)
             {
-                var nestedMatch = _nestRegex.Match(field);
-                if (nestedMatch.Success)
-                {
-                    var fieldName = nestedMatch.Groups["field"].Value;
-                    var subFields = nestedMatch.Groups["subFields"].Value;
+                var fieldName = match.Groups["field"].Value;
+                var subfieldsGroup = match.Groups["subfields"];
 
+                if (subfieldsGroup.Success)
+                {
+                    var subFields = subfieldsGroup.Value;
                     ret.NestedRings.Add(fieldName, ParseFields(subFields));
                 }
                 else
                 {
-                    ret.Fields.Add(field);
+                    ret.Fields.Add(fieldName);
                 }
+
+                match = match.NextMatch();
             }
             return ret;
         }
