@@ -19,7 +19,6 @@ namespace Axe.Engines
         /// <typeparam name="TEntity"></typeparam>
         /// <param name="query"></param>
         /// <param name="fields"></param>
-        /// <param name="profile"></param>
         /// <returns></returns>
         public IQueryable<TEntity> AxeFields<TEntity>(IQueryable<TEntity> query, string fields)
             where TEntity : class, new()

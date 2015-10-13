@@ -6,7 +6,7 @@ namespace Axe
 {
     public class AxeProfile
     {
-        private IDictionary<string, FieldRing> _defaultFields = new Dictionary<string, FieldRing>();
+        private readonly IDictionary<string, FieldRing> _defaultFields = new Dictionary<string, FieldRing>();
 
         /// <summary>
         /// Gets or sets the expression builder to use when generating the Select expression.

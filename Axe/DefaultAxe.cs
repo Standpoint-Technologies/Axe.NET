@@ -33,7 +33,7 @@ namespace Axe
 
         static DefaultAxe()
         {
-            var profile = new AxeProfile()
+            var profile = new AxeProfile
             {
                 ExpressionBuilder = new DefaultExpressionBuilder(),
                 FieldParser = new GoogleParser()

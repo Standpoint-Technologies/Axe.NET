@@ -15,7 +15,7 @@ namespace Axe.QueryableExtensions
         public static IQueryable<TEntity> AxeFields<TEntity>(this IQueryable<TEntity> query, string fields)
             where TEntity : class, new()
         {
-            return AxeFields<TEntity>(query, fields, DefaultAxe.Engine);
+            return AxeFields(query, fields, DefaultAxe.Engine);
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace Axe.QueryableExtensions
         /// <typeparam name="TEntity"></typeparam>
         /// <param name="query"></param>
         /// <param name="fields"></param>
-        /// <param name="profile"></param>
+        /// <param name="engine"></param>
         /// <returns></returns>
         public static IQueryable<TEntity> AxeFields<TEntity>(this IQueryable<TEntity> query, string fields, IAxeEngine engine)
             where TEntity : class, new()
