@@ -12,8 +12,7 @@ namespace Axe.ExpressionBuilders
     {
         protected static Lazy<ModuleBuilder> ModuleBuilder = new Lazy<ModuleBuilder>(() =>
         {
-            AssemblyName assemblyName = new AssemblyName();
-            assemblyName.Name = "AxeTempAssembly";
+            AssemblyName assemblyName = new AssemblyName { Name = "AxeTempAssembly" };
             AssemblyBuilder assemblyBuilder = Thread.GetDomain().DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
             return assemblyBuilder.DefineDynamicModule("AxeTempModule");
         });
@@ -32,10 +31,6 @@ namespace Axe.ExpressionBuilders
             where TEntity : class, new()
         {
             var inputParameter = Expression.Parameter(typeof(TEntity), "input");
-
-            var newType = profile.ExtendTypesDynamically ? GetOrCreateExtendingType(typeof(TEntity)) : typeof(TEntity);
-
-            var newExpression = Expression.New(newType);
 
             var fullExpression = RecursiveExpressionBuilder<TEntity>(fieldRing, profile, inputParameter);
 
@@ -67,6 +62,7 @@ namespace Axe.ExpressionBuilders
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
         /// <param name="fieldRing"></param>
+        /// <param name="profile"></param>
         /// <param name="parentParameter"></param>
         /// <returns></returns>
         protected MemberInitExpression RecursiveExpressionBuilder<TEntity>(FieldRing fieldRing, AxeProfile profile, Expression parentParameter)
