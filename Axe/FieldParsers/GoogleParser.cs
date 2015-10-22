@@ -10,8 +10,9 @@ namespace Axe.FieldParsers
 
         public FieldRing ParseFields(string fields)
         {
+            var cleanedFields = new string(fields.Where(x => !char.IsWhiteSpace(x)).ToArray());
             var ret = new FieldRing();
-            var match = _patternRegex.Match(fields);
+            var match = _patternRegex.Match(cleanedFields);
             while (match.Success)
             {
                 var fieldName = match.Groups["field"].Value;
