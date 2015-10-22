@@ -38,6 +38,18 @@ namespace AxeTests.FieldParserTests
         }
 
         [TestMethod]
+        public void TestSimpleListWithSpaces()
+        {
+            var fields = _parser.ParseFields("id, name, value ,data");
+            Assert.AreEqual(fields.Fields.Count, 4);
+            Assert.IsTrue(!fields.NestedRings.Any());
+            Assert.AreEqual(fields.Fields.ElementAt(0), "id");
+            Assert.AreEqual(fields.Fields.ElementAt(1), "name");
+            Assert.AreEqual(fields.Fields.ElementAt(2), "value");
+            Assert.AreEqual(fields.Fields.ElementAt(3), "data");
+        }
+
+        [TestMethod]
         public void TestSimpleNestedObject()
         {
             var fields = _parser.ParseFields("id,nested(id2)");
