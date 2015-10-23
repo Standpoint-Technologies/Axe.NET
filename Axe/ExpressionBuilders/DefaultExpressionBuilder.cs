@@ -65,22 +65,17 @@ namespace Axe.ExpressionBuilders
         /// <param name="profile"></param>
         /// <param name="parentParameter"></param>
         /// <returns></returns>
-        protected Expression RecursiveExpressionBuilder<TEntity>(FieldRing fieldRing, AxeProfile profile, Expression parentParameter, int counter = 1)
+        protected Expression RecursiveExpressionBuilder<TEntity>(FieldRing fieldRing, AxeProfile profile, Expression parentParameter, int counter = 0)
         {
             Type oldType = typeof(TEntity);
-            Type collectionType = null;
+            Type collectionType = oldType;
+            var inputParameter = parentParameter;
 
             // If type is a collection, we need the inner type
-            var isCollection = false;
-            var ienumerable = oldType.IsGenericType && oldType.GetGenericTypeDefinition() == typeof(IEnumerable<>) ? oldType : oldType.GetInterfaces()
-                .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                .FirstOrDefault();
-            var inputParameter = parentParameter;
-            if (ienumerable != null)
+            bool isCollection;
+            if (isCollection = tryGetEnumerableType(oldType, out oldType))
             {
-                isCollection = true;
-                collectionType = oldType;
-                oldType = ienumerable.GetGenericArguments().First();
+                // Switch the input parameter to reference a new paremeter for the Select
                 inputParameter = Expression.Parameter(oldType, $"input{counter}");
             }
 
@@ -89,29 +84,9 @@ namespace Axe.ExpressionBuilders
 
             var newExpression = Expression.New(newType);
 
-            var bindings = fieldRing.Fields.Select(field =>
-            {
-                var propertyInfo = oldType.GetProperty(field, propertyBindingFlags);
-                if (propertyInfo != null)
-                {
-                    var propertyExpression = Expression.Property(inputParameter, propertyInfo);
-                    return Expression.Bind(propertyInfo, propertyExpression);
-                }
-                return null;
-            }).Union(fieldRing.NestedRings.Select(field =>
-            {
-                var propertyInfo = oldType.GetProperty(field.Key, propertyBindingFlags);
-                if (propertyInfo != null)
-                {
-                    var nestedParameter = Expression.Property(inputParameter, field.Key);
-                    var propertyExpression = (Expression)typeof(DefaultExpressionBuilder)
-                        .GetMethod("RecursiveExpressionBuilder", BindingFlags.NonPublic | BindingFlags.Instance)
-                        .MakeGenericMethod(propertyInfo.PropertyType)
-                        .Invoke(this, new object[] { field.Value, profile, nestedParameter, counter + 1 });
-                    return Expression.Bind(propertyInfo, propertyExpression);
-                }
-                return null;
-            })).Where(x => x != null);
+            var bindings = fieldRing.Fields.Select(field => getFieldBinding(field, oldType, propertyBindingFlags, inputParameter))
+                .Union(fieldRing.NestedRings.Select(field => getNestedObjectBinding(field.Key, field.Value, oldType, propertyBindingFlags, inputParameter, profile, counter)))
+                .Where(x => x != null);
 
             if (isCollection)
             {
@@ -134,6 +109,37 @@ namespace Axe.ExpressionBuilders
             {
                 return Expression.MemberInit(newExpression, bindings);
             }
+        }
+
+        private MemberAssignment getFieldBinding(string field, Type type, BindingFlags bindingFlags, Expression source)
+        {
+            var propertyInfo = type.GetProperty(field, bindingFlags);
+
+            if (propertyInfo == null)
+            {
+                // Property was not found on type
+                return null;
+            }
+
+            var propertyExpression = Expression.Property(source, propertyInfo);
+            return Expression.Bind(propertyInfo, propertyExpression);
+        }
+
+        private MemberAssignment getNestedObjectBinding(string field, FieldRing fields, Type type, BindingFlags bindingFlags, Expression source, AxeProfile profile, int counter)
+        {
+            var propertyInfo = type.GetProperty(field, bindingFlags);
+            if (propertyInfo == null)
+            {
+                // Property was not found on type
+                return null;
+            }
+
+            var nestedParameter = Expression.Property(source, field);
+            var propertyExpression = (Expression)typeof(DefaultExpressionBuilder)
+                .GetMethod("RecursiveExpressionBuilder", BindingFlags.NonPublic | BindingFlags.Instance)
+                .MakeGenericMethod(propertyInfo.PropertyType)
+                .Invoke(this, new object[] { fields, profile, nestedParameter, counter + 1 });
+            return Expression.Bind(propertyInfo, propertyExpression);
         }
 
         private static Expression getSelectExpression(Type sourceType, Type destinationType, Expression source, MemberInitExpression initExpression, ParameterExpression instanceParameter, string parameterName)
@@ -171,6 +177,21 @@ namespace Axe.ExpressionBuilders
         {
             return typeof(IList<>).MakeGenericType(sourceType).IsAssignableFrom(collectionType)
                 || typeof(ICollection<>).MakeGenericType(sourceType).IsAssignableFrom(collectionType);
+        }
+
+        private static bool tryGetEnumerableType(Type type, out Type entityType)
+        {
+            var ienumerable = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>) ? type : type.GetInterfaces()
+                .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                .FirstOrDefault();
+            if (ienumerable != null)
+            {
+                entityType = ienumerable.GetGenericArguments().First();
+                return true;
+            }
+
+            entityType = type;
+            return false;
         }
     }
 }
