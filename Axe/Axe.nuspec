@@ -9,6 +9,10 @@
     <description>$description$</description>
     <language>en-US</language>
     <tags>Axe,REST,API</tags>
+    <releaseNotes>
+      v0.2.0 - Collection support
+        Axe now supports collection field limiting using the same syntax as nested objects.
+    </releaseNotes>
   </metadata>
   <files />
 </package>
