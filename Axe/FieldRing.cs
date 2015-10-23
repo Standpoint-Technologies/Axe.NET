@@ -38,6 +38,25 @@ namespace Axe
             where TEntity : class, new()
     {
         /// <summary>
+        /// Adds the collection from the given expression to the list of nested rings.
+        /// </summary>
+        /// <typeparam name="TProperty"></typeparam>
+        /// <typeparam name="TCollection"></typeparam>
+        /// <param name="locator"></param>
+        /// <param name="subLocators"></param>
+        /// <returns></returns>
+        public FieldRing<TEntity> AddCollection<TProperty, TCollection>(Expression<Func<TEntity, TProperty>> locator, Action<FieldRing<TCollection>> subLocators)
+            where TCollection : class, new() where TProperty : IEnumerable<TCollection>
+        {
+            var fieldRing = new FieldRing<TCollection>();
+            subLocators(fieldRing);
+
+            var propertyName = getPropertyInfo(locator).Name;
+            NestedRings.Add(propertyName, fieldRing);
+            return this;
+        }
+
+        /// <summary>
         /// Adds the fields from the given expression to the list of fields to include.
         /// </summary>
         /// <typeparam name="TProperty"></typeparam>
