@@ -45,8 +45,8 @@ namespace Axe
         /// <param name="locator"></param>
         /// <param name="subLocators"></param>
         /// <returns></returns>
-        public FieldRing<TEntity> AddCollection<TCollection, TCollectionType>(Expression<Func<TEntity, TCollection>> locator, Action<FieldRing<TCollectionType>> subLocators)
-            where TCollectionType : class, new() where TCollection : IEnumerable<TCollectionType>
+        public FieldRing<TEntity> AddCollection<TCollectionType>(Expression<Func<TEntity, IEnumerable<TCollectionType>>> locator, Action<FieldRing<TCollectionType>> subLocators)
+            where TCollectionType : class, new()
         {
             var fieldRing = new FieldRing<TCollectionType>();
             subLocators(fieldRing);
