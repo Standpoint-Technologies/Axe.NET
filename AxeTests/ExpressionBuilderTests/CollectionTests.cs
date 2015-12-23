@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Axe.ExpressionBuilders;
 using Axe.FieldParsers;
@@ -44,14 +43,14 @@ namespace AxeTests.ExpressionBuilderTests
         [TestMethod]
         public void TestEnumerable()
         {
-            var expression = _builder.BuildExpression<TestEnumerableClass>(_fieldRing, _profile);
+            var expression = _builder.BuildExpression<CollectionTests_TestEnumerableClass>(_fieldRing, _profile);
 
-            var testObject = new TestEnumerableClass
+            var testObject = new CollectionTests_TestEnumerableClass
             {
                 ID = 1,
-                Items = new List<TestChildObject>
+                Items = new List<CollectionTests_TestChildObject>
                 {
-                    new TestChildObject
+                    new CollectionTests_TestChildObject
                     {
                         ID = 2,
                         Exclude = "should not display"
@@ -75,14 +74,14 @@ namespace AxeTests.ExpressionBuilderTests
         [TestMethod]
         public void TestList()
         {
-            var expression = _builder.BuildExpression<TestListClass>(_fieldRing, _profile);
+            var expression = _builder.BuildExpression<CollectionTests_TestListClass>(_fieldRing, _profile);
 
-            var testObject = new TestListClass
+            var testObject = new CollectionTests_TestListClass
             {
                 ID = 1,
-                Items = new List<TestChildObject>
+                Items = new List<CollectionTests_TestChildObject>
                 {
-                    new TestChildObject
+                    new CollectionTests_TestChildObject
                     {
                         ID = 2,
                         Exclude = "should not display"
@@ -106,14 +105,14 @@ namespace AxeTests.ExpressionBuilderTests
         [TestMethod]
         public void TestArray()
         {
-            var expression = _builder.BuildExpression<TestArrayClass>(_fieldRing, _profile);
+            var expression = _builder.BuildExpression<CollectionTests_TestArrayClass>(_fieldRing, _profile);
 
-            var testObject = new TestArrayClass
+            var testObject = new CollectionTests_TestArrayClass
             {
                 ID = 1,
-                Items = new TestChildObject[]
+                Items = new CollectionTests_TestChildObject[]
                 {
-                    new TestChildObject
+                    new CollectionTests_TestChildObject
                     {
                         ID = 2,
                         Exclude = "should not display"
@@ -137,14 +136,14 @@ namespace AxeTests.ExpressionBuilderTests
         [TestMethod]
         public void TestCollection()
         {
-            var expression = _builder.BuildExpression<TestCollectionClass>(_fieldRing, _profile);
+            var expression = _builder.BuildExpression<CollectionTests_TestCollectionClass>(_fieldRing, _profile);
 
-            var testObject = new TestCollectionClass
+            var testObject = new CollectionTests_TestCollectionClass
             {
                 ID = 1,
-                Items = new List<TestChildObject>
+                Items = new List<CollectionTests_TestChildObject>
                 {
-                    new TestChildObject
+                    new CollectionTests_TestChildObject
                     {
                         ID = 2,
                         Exclude = "should not display"
@@ -165,39 +164,39 @@ namespace AxeTests.ExpressionBuilderTests
         }
 
 
-        public class TestChildObject
+        public class CollectionTests_TestChildObject
         {
             public int ID { get; set; }
 
             public string Exclude { get; set; }
         }
 
-        public class TestEnumerableClass
+        public class CollectionTests_TestEnumerableClass
         {
             public int ID { get; set; }
 
-            public IEnumerable<TestChildObject> Items { get; set; }
+            public IEnumerable<CollectionTests_TestChildObject> Items { get; set; }
         }
 
-        public class TestListClass
+        public class CollectionTests_TestListClass
         {
             public int ID { get; set; }
 
-            public List<TestChildObject> Items { get; set; }
+            public List<CollectionTests_TestChildObject> Items { get; set; }
         }
 
-        public class TestArrayClass
+        public class CollectionTests_TestArrayClass
         {
             public int ID { get; set; }
 
-            public TestChildObject[] Items { get; set; }
+            public CollectionTests_TestChildObject[] Items { get; set; }
         }
 
-        public class TestCollectionClass
+        public class CollectionTests_TestCollectionClass
         {
             public int ID { get; set; }
 
-            public ICollection<TestChildObject> Items { get; set; }
+            public ICollection<CollectionTests_TestChildObject> Items { get; set; }
         }
     }
 }

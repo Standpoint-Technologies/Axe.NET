@@ -139,7 +139,8 @@ namespace Axe.ExpressionBuilders
                 .GetMethod("RecursiveExpressionBuilder", BindingFlags.NonPublic | BindingFlags.Instance)
                 .MakeGenericMethod(propertyInfo.PropertyType)
                 .Invoke(this, new object[] { fields, profile, nestedParameter, counter + 1 });
-            return Expression.Bind(propertyInfo, propertyExpression);
+            var bindingExpression = nullCheck(source, nestedParameter, propertyExpression);
+            return Expression.Bind(propertyInfo, bindingExpression);
         }
 
         private static Expression getSelectExpression(Type sourceType, Type destinationType, Expression source, MemberInitExpression initExpression, ParameterExpression instanceParameter, string parameterName)
@@ -192,6 +193,14 @@ namespace Axe.ExpressionBuilders
 
             entityType = type;
             return false;
+        }
+
+        private static Expression nullCheck(Expression source, Expression property, Expression propertyExpression)
+        {
+            var nullSourceExpression = Expression.Constant(null, property.Type);
+            var nullDestinationExpression = Expression.Constant(null, propertyExpression.Type);
+            var equalityExpression = Expression.Equal(property, nullSourceExpression);
+            return Expression.Condition(equalityExpression, nullDestinationExpression, propertyExpression);
         }
     }
 }
