@@ -53,6 +53,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ExpressionBuilderTests\CollectionTests.cs" />
+    <Compile Include="ExpressionBuilderTests\NullTests.cs" />
     <Compile Include="FieldParserTests\GoogleParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -10,6 +10,8 @@
     <language>en-US</language>
     <tags>Axe,REST,API</tags>
     <releaseNotes>
+      v0.2.2 - Fixed #6
+        Fixed nested objects with null values being set to an empty object.
       v0.2.0 - Collection support
         Axe now supports collection field limiting using the same syntax as nested objects.
     </releaseNotes>
