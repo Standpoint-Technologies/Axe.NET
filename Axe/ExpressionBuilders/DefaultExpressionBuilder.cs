@@ -139,7 +139,7 @@ namespace Axe.ExpressionBuilders
                 .GetMethod("RecursiveExpressionBuilder", BindingFlags.NonPublic | BindingFlags.Instance)
                 .MakeGenericMethod(propertyInfo.PropertyType)
                 .Invoke(this, new object[] { fields, profile, nestedParameter, counter + 1 });
-            var bindingExpression = nullCheck(source, nestedParameter, propertyExpression);
+            var bindingExpression = profile.EnableNullReferenceCheck ? nullCheck(source, nestedParameter, propertyExpression) : propertyExpression;
             return Expression.Bind(propertyInfo, bindingExpression);
         }
 

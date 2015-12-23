@@ -9,6 +9,11 @@ namespace Axe
         private readonly IDictionary<string, FieldRing> _defaultFields = new Dictionary<string, FieldRing>();
 
         /// <summary>
+        /// Enables or disables checking for nulls in child objects. Enabling this is the correct implementation, but currently breaks Entity Framework.
+        /// </summary>
+        public bool EnableNullReferenceCheck { get; set; }
+
+        /// <summary>
         /// Gets or sets the expression builder to use when generating the Select expression.
         /// </summary>
         public IExpressionBuilder ExpressionBuilder { get; set; }
