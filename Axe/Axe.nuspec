@@ -10,9 +10,11 @@
     <language>en-US</language>
     <tags>Axe,REST,API</tags>
     <releaseNotes>
+      v0.2.4 - Fixed field parser and duplicate type name race condition.
+        The default Google field parser now handles more complex nesting better.
+        A race condition could occur where Axe tried to create the same dynamic type twice. This should now be resolved.
       v0.2.3 - Added flag to disable null value setting since this breaks EF.
-      v0.2.2 - Fixed #6
-        Fixed nested objects with null values being set to an empty object.
+      v0.2.2 - Fixed nested objects with null values being set to an empty object.
       v0.2.0 - Collection support
         Axe now supports collection field limiting using the same syntax as nested objects.
     </releaseNotes>
