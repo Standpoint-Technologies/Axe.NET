@@ -86,6 +86,32 @@ namespace AxeTests.FieldParserTests
         }
 
         [TestMethod]
+        public void TestMultipleNesting2()
+        {
+            var fields = _parser.ParseFields("id,nested(id2,nested2(id3,nested3(id4)))");
+            Assert.AreEqual(fields.Fields.Count, 1);
+            Assert.AreEqual(fields.NestedRings.Count, 1);
+            Assert.AreEqual(fields.Fields.First(), "id");
+            Assert.AreEqual(fields.NestedRings.First().Key, "nested");
+
+            var nested = fields.NestedRings.First().Value;
+            Assert.AreEqual(nested.Fields.Count, 1);
+            Assert.AreEqual(nested.NestedRings.Count, 1);
+            Assert.AreEqual(nested.Fields.First(), "id2");
+            Assert.AreEqual(nested.NestedRings.First().Key, "nested2");
+
+            var nested2 = nested.NestedRings.First().Value;
+            Assert.AreEqual(nested2.Fields.Count, 1);
+            Assert.IsTrue(nested2.NestedRings.Any());
+            Assert.AreEqual(nested2.Fields.First(), "id3");
+
+            var nested3 = nested2.NestedRings.First().Value;
+            Assert.AreEqual(nested3.Fields.Count, 1);
+            Assert.IsTrue(!nested3.NestedRings.Any());
+            Assert.AreEqual(nested3.Fields.First(), "id4");
+        }
+
+        [TestMethod]
         public void TestMultipleNestedObjects()
         {
             var fields = _parser.ParseFields("id,nested(id2),nested2(id3)");

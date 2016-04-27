@@ -5,7 +5,7 @@ namespace Axe.FieldParsers
 {
     public class GoogleParser : IFieldParser
     {
-        private readonly Regex _patternRegex = new Regex(@"(?<field>[^,\(]+)(\((?<subfields>.*?((?<open>\().+(?<-open>\))(?(open)(?!)))?)\))?");
+        private readonly Regex _patternRegex = new Regex(@"(?<field>[^,()]+)(?:\((?<subfields>(?:(?<open>\()|[^()]|(?<-open>\)))+)\))?");
 
 
         public FieldRing ParseFields(string fields)
