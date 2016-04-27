@@ -10,6 +10,8 @@ namespace Axe.ExpressionBuilders
 {
     public class DefaultExpressionBuilder : IExpressionBuilder
     {
+        private static readonly string ASSEMBLY_NAME = Assembly.GetExecutingAssembly().FullName;
+
         protected static Lazy<ModuleBuilder> ModuleBuilder = new Lazy<ModuleBuilder>(() =>
         {
             AssemblyName assemblyName = new AssemblyName { Name = "AxeTempAssembly" };
@@ -45,13 +47,16 @@ namespace Axe.ExpressionBuilders
         /// <returns>The new type</returns>
         protected Type GetOrCreateExtendingType(Type type)
         {
-            string typeName = type.Name + "_LimitFields";
+            var typeName = type.Name + "_LimitFields";
             Type newType;
-            if (!FakeTypes.TryGetValue(typeName, out newType))
+            lock (string.Intern($"{ASSEMBLY_NAME}_{typeName}"))
             {
-                TypeBuilder typeBuilder = ModuleBuilder.Value.DefineType(typeName, TypeAttributes.Public | TypeAttributes.Class, type);
-                newType = typeBuilder.CreateType();
-                FakeTypes.Add(typeName, newType);
+                if (!FakeTypes.TryGetValue(typeName, out newType))
+                {
+                    var typeBuilder = ModuleBuilder.Value.DefineType(typeName, TypeAttributes.Public | TypeAttributes.Class, type);
+                    newType = typeBuilder.CreateType();
+                    FakeTypes.Add(typeName, newType);
+                }
             }
             return newType;
         }
