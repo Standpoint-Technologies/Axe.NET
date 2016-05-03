@@ -84,7 +84,7 @@ namespace Axe.ExpressionBuilders
                 inputParameter = Expression.Parameter(oldType, $"input{counter}");
             }
 
-            var newType = profile.ExtendTypesDynamically ? GetOrCreateExtendingType(oldType) : oldType;
+            var newType = profile.EnableEntityFrameworkCompatibility ? GetOrCreateExtendingType(oldType) : oldType;
             var propertyBindingFlags = profile.IgnoreCase ? BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance : BindingFlags.Public | BindingFlags.Instance;
 
             var newExpression = Expression.New(newType);
@@ -144,7 +144,12 @@ namespace Axe.ExpressionBuilders
                 .GetMethod("RecursiveExpressionBuilder", BindingFlags.NonPublic | BindingFlags.Instance)
                 .MakeGenericMethod(propertyInfo.PropertyType)
                 .Invoke(this, new object[] { fields, profile, nestedParameter, counter + 1 });
-            var bindingExpression = profile.EnableNullReferenceCheck ? nullCheck(source, nestedParameter, propertyExpression) : propertyExpression;
+
+            // Entity Framework doesn't like comparing IEnumerable<>'s to null
+            var bindingExpression = profile.EnableEntityFrameworkCompatibility && isEnumerable(nestedParameter.Type)
+                ? propertyExpression
+                : nullCheck(source, nestedParameter, propertyExpression);
+
             return Expression.Bind(propertyInfo, bindingExpression);
         }
 
@@ -177,6 +182,17 @@ namespace Axe.ExpressionBuilders
                 collectionType.IsArray ? "ToArray" : "ToList",
                 new[] { destinationType },
                 selectExpression);
+        }
+
+        /// <summary>
+        /// Convenience method to check if a type extends IEnumerable.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private static bool isEnumerable(Type type)
+        {
+            Type ignore;
+            return tryGetEnumerableType(type, out ignore);
         }
 
         private static bool isList(Type collectionType, Type sourceType)

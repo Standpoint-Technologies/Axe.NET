@@ -33,7 +33,6 @@ namespace AxeTests.ExpressionBuilderTests
             _profile = new Axe.AxeProfile()
             {
                 ExpressionBuilder = _builder,
-                ExtendTypesDynamically = true,
                 FieldParser = new GoogleParser(),
                 IgnoreCase = true
             };

@@ -18,9 +18,7 @@ namespace AxeTests.ExpressionBuilderTests
             _builder = new DefaultExpressionBuilder();
             _profile = new Axe.AxeProfile()
             {
-                EnableNullReferenceCheck = true,
                 ExpressionBuilder = _builder,
-                ExtendTypesDynamically = true,
                 FieldParser = new GoogleParser(),
                 IgnoreCase = true,
             };

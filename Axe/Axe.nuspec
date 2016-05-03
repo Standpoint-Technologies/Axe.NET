@@ -10,6 +10,9 @@
     <language>en-US</language>
     <tags>Axe,REST,API</tags>
     <releaseNotes>
+      v0.2.5
+        - Consolidated AxeProfile EnableNullReferenceCheck and ExtendTypesDynamically into EnableEntityFrameworkCompatibility.
+        - Fixed null reference check to properly work with Entity Framework.
       v0.2.4 - Fixed field parser and duplicate type name race condition.
         The default Google field parser now handles more complex nesting better.
         A race condition could occur where Axe tried to create the same dynamic type twice. This should now be resolved.

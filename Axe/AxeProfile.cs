@@ -9,19 +9,14 @@ namespace Axe
         private readonly IDictionary<string, FieldRing> _defaultFields = new Dictionary<string, FieldRing>();
 
         /// <summary>
-        /// Enables or disables checking for nulls in child objects. Enabling this is the correct implementation, but currently breaks Entity Framework.
+        /// Enables compatibility with Entity Framework.
         /// </summary>
-        public bool EnableNullReferenceCheck { get; set; }
+        public bool EnableEntityFrameworkCompatibility { get; set; }
 
         /// <summary>
         /// Gets or sets the expression builder to use when generating the Select expression.
         /// </summary>
         public IExpressionBuilder ExpressionBuilder { get; set; }
-
-        /// <summary>
-        /// Enables or disables dynamic type extension. This adds overhead, but will fix Entity Framework's error of multiple constructors of the same type.
-        /// </summary>
-        public bool ExtendTypesDynamically { get; set; }
 
         /// <summary>
         /// Gets or sets the parser to use when parsing field strings.
